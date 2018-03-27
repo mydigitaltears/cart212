@@ -14,15 +14,18 @@
 import gab.opencv.*;
 import processing.video.*;
 import java.awt.*;
+import com.hamoid.*;
 
+VideoExport videoExport;
 Capture video;
-OpenCV opencv;
+OpenCV opencv1, opencv2;
 
 // List of my Face objects (persistent)
 ArrayList<Face> faceList;
 
 // List of detected faces (every frame)
 Rectangle[] faces;
+Rectangle[] sideFaces;
 
 // Number of faces detected over all time. Used to set IDs.
 int faceCount = 0;
@@ -33,8 +36,10 @@ int scl = 2;
 void setup() {
   size(640, 480);
   video = new Capture(this, width/scl, height/scl);
-  opencv = new OpenCV(this, width/scl, height/scl);
-  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);  
+  opencv1 = new OpenCV(this, width/scl, height/scl);
+  opencv1.loadCascade(OpenCV.CASCADE_FRONTALFACE);
+  //opencv2.loadCascade(OpenCV.CASCADE_PROFILEFACE);
+  
   
   faceList = new ArrayList<Face>();
   
@@ -43,8 +48,8 @@ void setup() {
 
 void draw() {
   scale(scl);
-  opencv.loadImage(video);
-
+  opencv1.loadImage(video);
+  //opencv2.loadImage(video);
   image(video, 0, 0 );
   
   detectFaces();
@@ -58,17 +63,17 @@ void draw() {
     rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height);
   }
   
-  for (Face f : faceList) {
-    strokeWeight(2);
-    f.display();
-  }
+  //for (Face f : faceList) {
+  //  strokeWeight(2);
+  //  f.display();
+  //}
 }
 
 void detectFaces() {
   
   // Faces detected in this frame
-  faces = opencv.detect();
-  
+  faces = opencv1.detect();
+  //sideFaces = opencv2.detect();
   // Check if the detected faces already exist are new or some has disappeared. 
   
   // SCENARIO 1 
