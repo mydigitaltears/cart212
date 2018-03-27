@@ -16,8 +16,10 @@ import processing.video.*;
 import java.awt.*;
 import com.hamoid.*;
 
-VideoExport videoExport;
+//videocamera
 Capture video;
+boolean recording = false;
+//face detection
 OpenCV opencv1, opencv2;
 
 // List of my Face objects (persistent)
@@ -44,6 +46,9 @@ void setup() {
   faceList = new ArrayList<Face>();
   
   video.start();
+  
+  //video setup
+  println("Press R to toggle recording");
 }
 
 void draw() {
@@ -51,7 +56,9 @@ void draw() {
   opencv1.loadImage(video);
   //opencv2.loadImage(video);
   image(video, 0, 0 );
-  
+  if(recording) {
+    saveFrame("output/face_####.png");
+  }
   detectFaces();
 
   // Draw all the faces
@@ -84,6 +91,7 @@ void detectFaces() {
       println("+++ New face detected with ID: " + faceCount);
       faceList.add(new Face(faceCount, faces[i].x,faces[i].y,faces[i].width,faces[i].height));
       faceCount++;
+      recording = true;
     }
   
   // SCENARIO 2 
@@ -148,6 +156,7 @@ void detectFaces() {
         f.countDown();
         if (f.dead()) {
           f.delete = true;
+          recording = false;
         } 
       }
     } 
@@ -164,4 +173,14 @@ void detectFaces() {
 
 void captureEvent(Capture c) {
   c.read();
+}
+
+void keyPressed() {
+  if(key == 'r' || key == 'R') {
+    recording = !recording;
+    println("Recording is " + (recording ? "ON" : "OFF"));
+  }
+  if (key == 'q') {
+    exit();
+  }
 }
